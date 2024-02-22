@@ -46,10 +46,13 @@ class ExistmentChecker:
         product_title = soup.find(class_='product__title').find('h1').text
         product_info = soup.find(class_='product__description')
         product_price = soup.find(class_='price-item').text.strip()
-        untappd_li = [li for li in product_info.find_all('li') if 'Untappd Score' in li.text]
-        if untappd_li:
-            # Extract the Untappd score
-            untappd_score = untappd_li[0].text.split(':')[1].strip()
-            print("Untappd Score:", untappd_score)
+        try:
+            untappd_li = [li for li in product_info.find_all('li') if 'Untappd Score' in li.text]
+            if untappd_li:
+                # Extract the Untappd score
+                untappd_score = untappd_li[0].text.split(':')[1].strip()
+                print("Untappd Score:", untappd_score)
+        except AttributeError:
+            untappd_score = str(0)
 
         return product_title, product_price, untappd_score
