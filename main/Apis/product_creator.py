@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+
 class ProductCreator:
     def create_product_on_shopify(self, data):
         print('create product')
