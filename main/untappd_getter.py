@@ -150,17 +150,20 @@ class UntappdGetter:
             rating.append(img_tag)
 
         rating_stars["style"] = "display: flex;"
-        new_html = f"""
-        <p>
-        {info_to_add[2]}
-        </p><br>
-        <h3>Productdetails:</h3>
-        <ul>
-        {li_with_percentage[0]}
-        {li_with_volume[0]}
-        <li>Untappd Score: {info_to_add[1][:4]} {rating_stars}</li>
-        </ul>
-        """
+        try:
+            new_html = f"""
+            <p>
+            {info_to_add[2]}
+            </p><br>
+            <h3>Productdetails:</h3>
+            <ul>
+            {li_with_percentage[0]}
+            {li_with_volume[0]}
+            <li>Untappd Score: {info_to_add[1][:4]} {rating_stars}</li>
+            </ul>
+            """
+        except IndexError:
+            new_html = ''
         update_product_url = f"https://7c70bf.myshopify.com/admin/api/2023-10/products/{productID}.json"
         payload = {"product": {
             "id": productID,
