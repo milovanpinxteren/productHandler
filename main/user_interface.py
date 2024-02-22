@@ -17,7 +17,7 @@ from Apis.existment_checker import ExistmentChecker
 class UserInterface:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("House of Beers Productinvoer")
+        self.root.title("HoB Productinvoer en Labelprint")
         width = self.root.winfo_screenwidth()
         height = self.root.winfo_screenheight()
         self.root.geometry("%dx%d" % (width, height))
