@@ -237,7 +237,7 @@ class UserInterface:
 
         self.max_time_label = Label(self.grid_frame, text="Tijd tot (b.v. 12:30):")
         self.max_time_label.grid(row=14, column=5, columnspan=1, sticky=tk.W)
-        self.default_max_time = tk.StringVar(value="00:00")
+        self.default_max_time = tk.StringVar(value="23:59")
         self.max_time_picker = Entry(self.grid_frame, textvariable=self.default_max_time)
         self.max_time_picker.grid(row=14, column=6, sticky=tk.W)
 
