@@ -87,11 +87,16 @@ class Lists:
         'Toppling Goliath',
         'Sierra Nevada',
         'Firestone',
+        '3 Sons Brewing',
+        'Spartacus Brewing',
+        'Wicked Barrel',
+        'Leffe',
+        'La Pirata'
 
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
-                       "Tsjechië", "Verenigde Staten", "Overig"]
+                       "Tsjechië", "Verenigde Staten", "Overig", "Brazilië"]
 
     beer_type_options = ['Barleywine', 'Bock', 'Blond', 'Dubbel', 'Fruitbier', 'IPA', 'Tripel', 'Saison Ale', 'Lager',
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',

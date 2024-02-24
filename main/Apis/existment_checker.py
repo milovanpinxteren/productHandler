@@ -46,6 +46,7 @@ class ExistmentChecker:
         product_title = soup.find(class_='product__title').find('h1').text
         product_info = soup.find(class_='product__description')
         product_price = soup.find(class_='price-item').text.strip()
+        untappd_score = str(0)
         try:
             untappd_li = [li for li in product_info.find_all('li') if 'Untappd Score' in li.text]
             if untappd_li:

@@ -5,6 +5,7 @@ import cv2
 from PIL import Image, ImageTk
 import datetime
 import os
+from tkcalendar import DateEntry
 
 from Apis.product_creator import ProductCreator
 from Apis.product_deletor import ProductDeletor
@@ -12,6 +13,7 @@ from Apis.quantity_updater import QuantityUpdater
 from Apis.upload_image_to_shopify import ImageUploader
 from data.lists import Lists
 from Apis.existment_checker import ExistmentChecker
+from label_printer.print_label_selection import SelectionLabelPrinter
 
 
 class UserInterface:
@@ -49,6 +51,7 @@ class UserInterface:
         self.quantity_updater = QuantityUpdater()
         self.product_deletor = ProductDeletor()
         self.existment_checker = ExistmentChecker()
+        self.selection_label_printer = SelectionLabelPrinter()
 
     def run(self):
         self.root.mainloop()
@@ -197,8 +200,8 @@ class UserInterface:
                                        text="Druk op knop om foto naar shopify te uploaden. (Eerst moet product gemaakt zijn)")
         self.feedback_label.grid(row=9, column=4, columnspan=5)
 
-        self.vs = cv2.VideoCapture(0)
-        self.video_loop()
+        # self.vs = cv2.VideoCapture(0)
+        # self.video_loop()
 
         self.check_barcode_existment_label = Label(self.grid_frame, text="Barcode/titel voor check in systeem:")
         self.check_barcode_existment_label.grid(row=17, column=0, sticky=tk.W)
@@ -214,6 +217,31 @@ class UserInterface:
 
         self.check_barcode_existment_feedback_label = Label(self.grid_frame, text="Vul eerst barcode/titel in, en druk op 'check in systeem'")
         self.check_barcode_existment_feedback_label.grid(row=17, column=4, columnspan=5, sticky=tk.W)
+
+        self.min_date_label = Label(self.grid_frame, text="print labels vanaf:")
+        self.min_date_label.grid(row=13, column=4, columnspan=1, sticky=tk.W)
+        self.min_date_picker = DateEntry(self.grid_frame)
+        self.min_date_picker.grid(row=13, column=4, sticky=tk.E)
+
+        self.min_time_label = Label(self.grid_frame, text="Tijd vanaf (b.v. 12:30):")
+        self.min_time_label.grid(row=13, column=5, columnspan=1, sticky=tk.W)
+        self.default_min_time = tk.StringVar(value="00:00")
+        self.min_time_picker = Entry(self.grid_frame, textvariable=self.default_min_time)
+        self.min_time_picker.grid(row=13, column=6, sticky=tk.W)
+
+        self.max_date_label = Label(self.grid_frame, text="print labels tot:")
+        self.max_date_label.grid(row=14, column=4, columnspan=1, sticky=tk.W)
+        self.max_date_picker = DateEntry(self.grid_frame)
+        self.max_date_picker.grid(row=14, column=4, sticky=tk.E)
+
+        self.max_time_label = Label(self.grid_frame, text="Tijd tot (b.v. 12:30):")
+        self.max_time_label.grid(row=14, column=5, columnspan=1, sticky=tk.W)
+        self.default_max_time = tk.StringVar(value="00:00")
+        self.max_time_picker = Entry(self.grid_frame, textvariable=self.default_max_time)
+        self.max_time_picker.grid(row=14, column=6, sticky=tk.W)
+
+        self.print_label_selection = tk.Button(self.grid_frame, text="Print selectie labels", command=self.print_label_selection, bg='lightgreen')
+        self.print_label_selection.grid(row=15, column=4, padx=10, pady=5, sticky="we", columnspan=1)
 
         self.next_product_button = tk.Button(self.grid_frame, text="Volgend Product", command=self.next_product, bg='orange')
         self.next_product_button.grid(row=18, column=0, padx=10, pady=5, sticky="we", columnspan=8)
@@ -346,6 +374,18 @@ class UserInterface:
     def print_label(self):
         product_url = self.check_barcode_existment_feedback_label.cget("text")
         self.existment_checker.print_label(product_url)
+
+    def print_label_selection(self):
+        min_date = self.min_date_picker.get_date()
+        min_time = self.min_time_picker.get()
+        max_date = self.max_date_picker.get_date()
+        max_time = self.max_time_picker.get()
+        min_time_for_query = str(min_time) + ':00-00:00'
+        max_time_for_query = str(max_time) + ':00-00:00'
+        query = f'created_at_min={min_date} {min_time_for_query}&created_at_max={max_date} {max_time_for_query}'
+        self.selection_label_printer.print_labels(query)
+
+
     def next_product(self):
         # Clear all values and set focus on barcode_entry
         self.brand_value_inside.set("Overig")
