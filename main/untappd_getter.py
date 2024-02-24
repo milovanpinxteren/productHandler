@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 
 
 class UntappdGetter:
-    def __init__(self):
+    # def __init__(self):
+    def get_untappd(self):
         self.found_beers = 0
         self.found_simpliefied = 0
         self.unfound_beers = 0
@@ -50,6 +51,7 @@ class UntappdGetter:
         print('errors: ', self.errors)
         print('unfound beer list: ', self.unfound_beers_list)
         print('printed labels: ', self.printed_labels)
+        return 'done'
     def get_beers_from_shopify(self):
         # self.shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2023-10/products.json?limit=250'
         load_dotenv()
@@ -190,4 +192,4 @@ class UntappdGetter:
         elif beer in self.tried_beers:
             return False
 
-untappd_getter = UntappdGetter()
+# untappd_getter = UntappdGetter()
