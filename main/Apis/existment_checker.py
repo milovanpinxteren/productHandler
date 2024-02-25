@@ -56,4 +56,5 @@ class ExistmentChecker:
         except AttributeError:
             untappd_score = str(0)
 
+
         return product_title, product_price, untappd_score

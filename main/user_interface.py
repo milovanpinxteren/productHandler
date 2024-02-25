@@ -14,6 +14,8 @@ from Apis.upload_image_to_shopify import ImageUploader
 from data.lists import Lists
 from Apis.existment_checker import ExistmentChecker
 from label_printer.print_label_selection import SelectionLabelPrinter
+from untappd_getter import UntappdGetter
+from microcash_importer.microcash_import_maker import MicrocashProductMaker
 
 
 class UserInterface:
@@ -52,6 +54,7 @@ class UserInterface:
         self.product_deletor = ProductDeletor()
         self.existment_checker = ExistmentChecker()
         self.selection_label_printer = SelectionLabelPrinter()
+        self.microcash_import_maker = MicrocashProductMaker()
 
     def run(self):
         self.root.mainloop()
@@ -200,8 +203,8 @@ class UserInterface:
                                        text="Druk op knop om foto naar shopify te uploaden. (Eerst moet product gemaakt zijn)")
         self.feedback_label.grid(row=9, column=4, columnspan=5)
 
-        # self.vs = cv2.VideoCapture(0)
-        # self.video_loop()
+        self.vs = cv2.VideoCapture(0)
+        self.video_loop()
 
         self.check_barcode_existment_label = Label(self.grid_frame, text="Barcode/titel voor check in systeem:")
         self.check_barcode_existment_label.grid(row=17, column=0, sticky=tk.W)
@@ -236,12 +239,18 @@ class UserInterface:
 
         self.max_time_label = Label(self.grid_frame, text="Tijd tot (b.v. 12:30):")
         self.max_time_label.grid(row=14, column=5, columnspan=1, sticky=tk.W)
-        self.default_max_time = tk.StringVar(value="00:00")
+        self.default_max_time = tk.StringVar(value="23:59")
         self.max_time_picker = Entry(self.grid_frame, textvariable=self.default_max_time)
         self.max_time_picker.grid(row=14, column=6, sticky=tk.W)
 
+        self.get_untappd_button = tk.Button(self.grid_frame, text="Haal Untappd Gegevens op", command=self.get_untappd, bg='lightgreen')
+        self.get_untappd_button.grid(row=15, column=4, padx=10, pady=5, sticky="we", columnspan=1)
+
         self.print_label_selection = tk.Button(self.grid_frame, text="Print selectie labels", command=self.print_label_selection, bg='lightgreen')
-        self.print_label_selection.grid(row=15, column=4, padx=10, pady=5, sticky="we", columnspan=1)
+        self.print_label_selection.grid(row=15, column=5, padx=10, pady=5, sticky="we", columnspan=1)
+
+        self.prepare_microcash_import_button = tk.Button(self.grid_frame, text="Zet import klaar", command=self.prepare_microcash_import, bg='lightblue')
+        self.prepare_microcash_import_button.grid(row=15, column=6, padx=10, pady=5, sticky="we", columnspan=1)
 
         self.next_product_button = tk.Button(self.grid_frame, text="Volgend Product", command=self.next_product, bg='orange')
         self.next_product_button.grid(row=18, column=0, padx=10, pady=5, sticky="we", columnspan=8)
@@ -384,6 +393,23 @@ class UserInterface:
         max_time_for_query = str(max_time) + ':00-00:00'
         query = f'created_at_min={min_date} {min_time_for_query}&created_at_max={max_date} {max_time_for_query}'
         self.selection_label_printer.print_labels(query)
+
+
+    def prepare_microcash_import(self):
+        min_date = self.min_date_picker.get_date()
+        min_time = self.min_time_picker.get()
+        max_date = self.max_date_picker.get_date()
+        max_time = self.max_time_picker.get()
+        min_time_for_query = str(min_time) + ':00-00:00'
+        max_time_for_query = str(max_time) + ':00-00:00'
+        query = f'created_at_min={min_date} {min_time_for_query}&created_at_max={max_date} {max_time_for_query}'
+        self.microcash_import_maker.prepare_import(query)
+    def get_untappd(self):
+        untappd_getter = UntappdGetter()
+        untappd_updated = untappd_getter.get_untappd()
+        if untappd_updated == 'done':
+            self.feedback_label.config(text="Untappd gegevens geüpdated, klaar om labels te printen")
+
 
 
     def next_product(self):
