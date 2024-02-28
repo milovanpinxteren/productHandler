@@ -1,1 +1,5 @@
 .env
+__pycache__/
+
+# User-specific stuff
+.idea/**
