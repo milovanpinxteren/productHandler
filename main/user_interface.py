@@ -379,6 +379,7 @@ class UserInterface:
         self.check_barcode_existment_feedback_label.config(text=found_product[1])
         if found_product:
             self.print_label_button['state'] = 'normal'
+        self.check_barcode_existment_entry.delete(0, 'end')
 
     def print_label(self):
         product_url = self.check_barcode_existment_feedback_label.cget("text")
