@@ -44,7 +44,7 @@ class UserInterface:
         for i in range(20):
             for j in range(8):
                 label = tk.Label(self.grid_frame, anchor="w", height=self.column_height, width=self.column_width,
-                                 text="", borderwidth=0, relief="groove")
+                                 text="", borderwidth=1, relief="groove")
                 label.grid(row=i, column=j, sticky="nsew")
 
         self.initialize_widgets()
