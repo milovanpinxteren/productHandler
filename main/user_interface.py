@@ -261,6 +261,7 @@ class UserInterface:
         self.next_product_button.grid(row=18, column=0, padx=10, pady=5, sticky="we", columnspan=8)
 
     def submit_product(self):
+        self.image_counter = 0
         barcode = self.barcode_entry.get()
         title = self.title_entry.get()
         price = self.price_entry.get().replace(',', '.')
