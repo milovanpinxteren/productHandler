@@ -55,6 +55,7 @@ class UserInterface:
         self.existment_checker = ExistmentChecker()
         self.selection_label_printer = SelectionLabelPrinter()
         self.microcash_import_maker = MicrocashProductMaker()
+        self.untappd_getter = UntappdGetter()
 
     def run(self):
         self.root.mainloop()
@@ -203,8 +204,8 @@ class UserInterface:
                                        text="Druk op knop om foto naar shopify te uploaden. (Eerst moet product gemaakt zijn)")
         self.feedback_label.grid(row=9, column=4, columnspan=5)
 
-        self.vs = cv2.VideoCapture(0)
-        self.video_loop()
+        # self.vs = cv2.VideoCapture(0)
+        # self.video_loop()
 
         self.check_barcode_existment_label = Label(self.grid_frame, text="Barcode/titel voor check in systeem:")
         self.check_barcode_existment_label.grid(row=17, column=0, sticky=tk.W)
@@ -214,12 +215,16 @@ class UserInterface:
                                     justify='center', bg='yellow')
         self.check_barcode_existment_button.grid(row=17, column=2)
 
+        self.update_untappd_button = Button(self.grid_frame, text="Update Untappd van product", command=self.update_untappd, anchor="center",
+                                    justify='center', bg='yellow', state="disabled")
+        self.update_untappd_button.grid(row=17, column=3)
+
         self.print_label_button = Button(self.grid_frame, text="Print Label", command=self.print_label, anchor="center",
                                     justify='center', bg='green', state="disabled")
-        self.print_label_button.grid(row=17, column=3)
+        self.print_label_button.grid(row=17, column=4)
 
         self.check_barcode_existment_feedback_label = Label(self.grid_frame, text="Vul eerst barcode/titel in, en druk op 'check in systeem'")
-        self.check_barcode_existment_feedback_label.grid(row=17, column=4, columnspan=5, sticky=tk.W)
+        self.check_barcode_existment_feedback_label.grid(row=17, column=5, columnspan=5, sticky=tk.W)
 
         self.min_date_label = Label(self.grid_frame, text="print labels vanaf:")
         self.min_date_label.grid(row=13, column=4, columnspan=1, sticky=tk.W)
@@ -372,13 +377,16 @@ class UserInterface:
         for type in filtered_types:
             self.type_value_inside.set(type)
 
+    def update_untappd(self):
+        beer_url = self.check_barcode_existment_feedback_label.cget("text")
+        self.untappd_getter.get_untappd(beer_url)
     def check_barcode_existment(self):
         barcode_value = self.check_barcode_existment_entry.get()
         found_product = self.existment_checker.check_existment(barcode_value)
-        print(found_product)
         self.check_barcode_existment_feedback_label.config(text=found_product[1])
         if found_product:
             self.print_label_button['state'] = 'normal'
+            self.update_untappd_button['state'] = 'normal'
         self.check_barcode_existment_entry.delete(0, 'end')
 
     def print_label(self):
@@ -406,8 +414,7 @@ class UserInterface:
         query = f'created_at_min={min_date} {min_time_for_query}&created_at_max={max_date} {max_time_for_query}'
         self.microcash_import_maker.prepare_import(query)
     def get_untappd(self):
-        untappd_getter = UntappdGetter()
-        untappd_updated = untappd_getter.get_untappd()
+        untappd_updated = self.untappd_getter.get_untappd('all')
         if untappd_updated == 'done':
             self.feedback_label.config(text="Untappd gegevens geüpdated, klaar om labels te printen")
 

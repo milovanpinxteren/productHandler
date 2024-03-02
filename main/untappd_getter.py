@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 class UntappdGetter:
     # def __init__(self):
-    def get_untappd(self):
+    def get_untappd(self, beers):
         self.found_beers = 0
         self.found_simpliefied = 0
         self.unfound_beers = 0
@@ -17,7 +17,10 @@ class UntappdGetter:
         self.errors = 0
         self.tried_beers = []
         self.unfound_beers_list = []
-        all_beers = self.get_beers_from_shopify()
+        if beers == 'all':
+            all_beers = self.get_beers_from_shopify()
+        else:
+            all_beers = self.get_beer_from_shopify(beers)
         self.printed_labels = []
         for beer_selection in all_beers: #each selection has 250 beers
             for beer in beer_selection:
@@ -75,6 +78,24 @@ class UntappdGetter:
                 status_code = 404
         return beer_list
 
+    def get_beer_from_shopify(self, beer_url):
+        # self.shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2023-10/products.json?limit=250'
+        load_dotenv()
+        self.access_token = os.environ["ACCESS_TOKEN"]
+        print(beer_url)
+        beer_list = []
+        handle = beer_url.split('/')[-1]
+        self.headers = {"Accept": "application/json", "Content-Type": "application/json",
+                   "X-Shopify-Access-Token": self.access_token}
+        self.shopify_store_url = f"https://7c70bf.myshopify.com/admin/api/2023-10/products.json?handle={handle}"
+
+        response = requests.get(url=self.shopify_store_url, headers=self.headers)
+        if response.status_code == 200:
+            beer_list.append(response.json()['products'])
+        else:
+            return beer_list == []
+
+        return beer_list
 
     def get_beer_from_untappd(self, beer):
         beer_query = beer.replace(' ', '+')
