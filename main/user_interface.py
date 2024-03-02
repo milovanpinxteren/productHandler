@@ -380,6 +380,7 @@ class UserInterface:
     def update_untappd(self):
         beer_url = self.check_barcode_existment_feedback_label.cget("text")
         self.untappd_getter.get_untappd(beer_url)
+        self.check_barcode_existment_feedback_label.config(text='Untappd geüpdated')
     def check_barcode_existment(self):
         barcode_value = self.check_barcode_existment_entry.get()
         found_product = self.existment_checker.check_existment(barcode_value)

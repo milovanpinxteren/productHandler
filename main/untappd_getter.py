@@ -84,7 +84,7 @@ class UntappdGetter:
         self.access_token = os.environ["ACCESS_TOKEN"]
         print(beer_url)
         beer_list = []
-        handle = beer_url.split('/')[-1]
+        handle = beer_url.split('/')[-1].split('?')[0]
         self.headers = {"Accept": "application/json", "Content-Type": "application/json",
                    "X-Shopify-Access-Token": self.access_token}
         self.shopify_store_url = f"https://7c70bf.myshopify.com/admin/api/2023-10/products.json?handle={handle}"
