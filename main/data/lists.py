@@ -92,7 +92,8 @@ class Lists:
         'Wicked Barrel',
         'Leffe',
         'La Pirata',
-        'Ãrpus'
+        'Ãrpus',
+        'Fuerst Wiacek'
 
     ]
 
