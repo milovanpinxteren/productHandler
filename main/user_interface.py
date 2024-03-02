@@ -204,8 +204,8 @@ class UserInterface:
                                        text="Druk op knop om foto naar shopify te uploaden. (Eerst moet product gemaakt zijn)")
         self.feedback_label.grid(row=9, column=4, columnspan=5)
 
-        # self.vs = cv2.VideoCapture(0)
-        # self.video_loop()
+        self.vs = cv2.VideoCapture(0)
+        self.video_loop()
 
         self.check_barcode_existment_label = Label(self.grid_frame, text="Barcode/titel voor check in systeem:")
         self.check_barcode_existment_label.grid(row=17, column=0, sticky=tk.W)
