@@ -101,7 +101,7 @@ class Lists:
 
     beer_type_options = ['Barleywine', 'Bock', 'Blond', 'Dubbel', 'Fruitbier', 'IPA', 'Tripel', 'Saison Ale', 'Lager',
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
-                         'Weizen', 'Witbier', 'Alcoholvrij', 'Amber']
+                         'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider']
 
     aging_methods = ['Barrel Aged', 'Niet Barrel Aged']
 
