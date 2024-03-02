@@ -91,7 +91,8 @@ class Lists:
         'Spartacus Brewing',
         'Wicked Barrel',
         'Leffe',
-        'La Pirata'
+        'La Pirata',
+        'Ãrpus'
 
     ]
 
