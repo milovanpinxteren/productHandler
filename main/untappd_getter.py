@@ -25,7 +25,7 @@ class UntappdGetter:
         for beer_selection in all_beers: #each selection has 250 beers
             for beer in beer_selection:
                 try:
-                    if 'Untappd' not in beer['body_html']:
+                    if 'Untappd' not in beer['body_html'] or len(all_beers) == 1:
                         title = beer['title']
                         if title.endswith('37.5 CL'):
                             title = title[:-10]
