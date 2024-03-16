@@ -93,7 +93,8 @@ class Lists:
         'Leffe',
         'La Pirata',
         'Ãrpus',
-        'Fuerst Wiacek'
+        'Fuerst Wiacek',
+        'Sancti Adalberti'
 
     ]
 

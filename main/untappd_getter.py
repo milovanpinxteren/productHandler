@@ -1,5 +1,6 @@
 import os
 import re
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -70,7 +71,12 @@ class UntappdGetter:
         while status_code == 200:
             get_all_beers_url = f"https://7c70bf.myshopify.com/admin/api/2023-10/products.json?limit=250&since_id={last_product_id}"
             get_all_product_original_site_response = requests.get(url=get_all_beers_url, headers=self.headers)
-            beer_list.append(get_all_product_original_site_response.json()['products'])
+            try:
+                beer_list.append(get_all_product_original_site_response.json()['products'])
+            except KeyError: #rate limit exceeded
+                time.sleep(1)
+                get_all_product_original_site_response = requests.get(url=get_all_beers_url, headers=self.headers)
+                beer_list.append(get_all_product_original_site_response.json()['products'])
             status_code = get_all_product_original_site_response.status_code
             try:
                 last_product_id = get_all_product_original_site_response.json()['products'][249]['id']

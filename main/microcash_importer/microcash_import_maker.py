@@ -9,6 +9,8 @@ import pandas as pd
 
 from microcash_importer.email_sender import EmailSender
 
+from untappd_getter import UntappdGetter
+
 
 class MicrocashProductMaker:
     def prepare_import(self, query):
@@ -17,14 +19,18 @@ class MicrocashProductMaker:
         #                                  'leverancier1', 'bestelnummer1', 'merk', 'groep', 'land', 'extra_barcode',
         #                                  'variant_koppelnr', 'voorraad', 'kratinhoud'
         #                                  ])
-        all_beers = self.prepare_products(query)
+        if "created_at_min=2024-01-01" in query: #if from 1 jan (user wants all beers)
+            untappd_getter = UntappdGetter()
+            all_beers = untappd_getter.get_beers_from_shopify()
+        else:
+            all_beers = self.prepare_products(query)
         taken_barcodes = []
         beer_counter = 0
         rows = []
         for beer_selection in all_beers:  # each selection has 250 beers
             for beer in beer_selection:
                 beer_counter += 1
-                #         print(beer_counter)
+                print(beer_counter)
                 cleaned_emballage_text = re.sub(r'[^0-9.,]', '', beer['tags'])
                 time.sleep(1)
                 btw_groep = self.get_product_BTW_value(str(beer['id']))
@@ -52,9 +58,9 @@ class MicrocashProductMaker:
                        }
                 rows.append(row)
                 # beers_df = beers_df.append(row, ignore_index=True)
-            beers_df = pd.DataFrame(rows)
-            email_sender = EmailSender()
-            email_sender.send_email(beers_df)
+        beers_df = pd.DataFrame(rows)
+        email_sender = EmailSender()
+        email_sender.send_email(beers_df)
         # beers_df = pd.concat(rows, ignore_index=True)
 
         return rows
