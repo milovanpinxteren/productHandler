@@ -94,7 +94,8 @@ class Lists:
         'La Pirata',
         'Ãrpus',
         'Fuerst Wiacek',
-        'Sancti Adalberti'
+        'Sancti Adalberti',
+        'Bon Secours'
 
     ]
 
