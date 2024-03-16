@@ -96,7 +96,8 @@ class Lists:
         'Fuerst Wiacek',
         'Sancti Adalberti',
         'Bon Secours',
-        'Paix Dieu'
+        'Paix Dieu',
+        'Corsendonk'
 
     ]
 
