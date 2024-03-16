@@ -95,7 +95,8 @@ class Lists:
         'Ãrpus',
         'Fuerst Wiacek',
         'Sancti Adalberti',
-        'Bon Secours'
+        'Bon Secours',
+        'Paix Dieu'
 
     ]
 
