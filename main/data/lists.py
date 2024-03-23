@@ -97,12 +97,13 @@ class Lists:
         'Sancti Adalberti',
         'Bon Secours',
         'Paix Dieu',
-        'Corsendonk'
+        'Corsendonk',
+        'Blackout Brewing'
 
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
-                       "Tsjechië", "Verenigde Staten", "Overig", "Brazilië"]
+                       "Tsjechië", "Verenigde Staten", "Overig", "Brazilië", 'Roemenië', 'Canada']
 
     beer_type_options = ['Barleywine', 'Bock', 'Blond', 'Dubbel', 'Fruitbier', 'IPA', 'Tripel', 'Saison Ale', 'Lager',
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
