@@ -98,7 +98,8 @@ class Lists:
         'Bon Secours',
         'Paix Dieu',
         'Corsendonk',
-        'Blackout Brewing'
+        'Blackout Brewing',
+        'Anchorage'
 
     ]
 
