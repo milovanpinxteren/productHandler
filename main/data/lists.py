@@ -99,7 +99,8 @@ class Lists:
         'Paix Dieu',
         'Corsendonk',
         'Blackout Brewing',
-        'Anchorage'
+        'Anchorage',
+        'métaphore'
 
     ]
 
