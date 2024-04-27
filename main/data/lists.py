@@ -101,7 +101,6 @@ class Lists:
         'Blackout Brewing',
         'Anchorage',
         'métaphore'
-
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
