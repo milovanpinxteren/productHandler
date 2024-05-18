@@ -100,7 +100,7 @@ class Lists:
         'Corsendonk',
         'Blackout Brewing',
         'Anchorage',
-        'métaphore'
+        'métaphore',
         'Elegast'
     ]
 
