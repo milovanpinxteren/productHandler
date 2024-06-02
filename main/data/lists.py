@@ -121,3 +121,5 @@ class Lists:
                       "65 CL", "75 CL", "1 L", "1.5 L", "3 L", "5 L", "10L (fust)", "20L (fust)", "30L (fust)"]
 
     statiegeld_options = ['0', '0.10', '0.15', '0.20', '0.25', '0.35', '0.40', '0.50']
+
+    tax_options = ['H', 'L', '0']

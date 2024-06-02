@@ -160,36 +160,43 @@ class UserInterface:
         self.available_amount_label = Label(self.grid_frame, text="Aantal beschikbaar:")
         self.available_amount_label.grid(row=3, column=0, sticky=tk.W)
         self.available_amount_entry = Entry(self.grid_frame, width=4)
-        self.available_amount_entry.grid(row=3, column=0, sticky=tk.E)
+        self.available_amount_entry.grid(row=3, column=0, sticky=tk.E, padx=55, pady=5)
 
         self.item_weight_label = Label(self.grid_frame, text="Gewicht (in gram):")
         self.item_weight_label.grid(row=3, column=1, sticky=tk.W)
-        self.item_weight_entry = Entry(self.grid_frame, width=5)
-        self.item_weight_entry.grid(row=3, column=1, sticky=tk.E)
+        self.item_weight_entry = Entry(self.grid_frame, width=7)
+        self.item_weight_entry.grid(row=3, column=1, sticky=tk.E, padx=45, pady=5)
 
         self.item_brewyear_label = Label(self.grid_frame, text="Brouwjaar (bij titel):")
         self.item_brewyear_label.grid(row=3, column=2, sticky=tk.W)
-        self.item_brewyear_entry = Entry(self.grid_frame)
-        self.item_brewyear_entry.grid(row=3, column=3, sticky=tk.W)
+        self.item_brewyear_entry = Entry(self.grid_frame, width=5)
+        self.item_brewyear_entry.grid(row=3, column=2, sticky=tk.E, padx=50, pady=5)
 
         self.item_percentage_label = Label(self.grid_frame, text="Alcoholpercentage:")
-        self.item_percentage_label.grid(row=3, column=4, sticky=tk.W)
-        self.item_percentage_entry = Entry(self.grid_frame)
-        self.item_percentage_entry.grid(row=3, column=4, sticky=tk.E)
+        self.item_percentage_label.grid(row=3, column=3, sticky=tk.W)
+        self.item_percentage_entry = Entry(self.grid_frame, width=3)
+        self.item_percentage_entry.grid(row=3, column=3, sticky=tk.E, padx=70, pady=5)
 
         self.item_statiegeld_label = Label(self.grid_frame, text="Statiegeld:")
         self.statiegeld_value_inside = tkinter.StringVar(self.grid_frame)
         self.statiegeld_value_inside.set(str(0.0))
-        self.item_statiegeld_label.grid(row=3, column=5, sticky=tk.W)
+        self.item_statiegeld_label.grid(row=3, column=4, sticky=tk.W)
         self.item_statiegeld_entry = tk.OptionMenu(self.grid_frame, self.statiegeld_value_inside, *Lists.statiegeld_options)
-        self.item_statiegeld_entry.grid(row=3, column=5, sticky=tk.E)
+        self.item_statiegeld_entry.grid(row=3, column=4, sticky=tk.E, padx=55, pady=5)
 
         self.item_volume_label = Label(self.grid_frame, text="Volume (in CL) (bij titel):")
         self.volume_value_inside = tkinter.StringVar(self.grid_frame)
         self.volume_value_inside.set("33 CL")
-        self.item_volume_label.grid(row=3, column=6, sticky=tk.W)
+        self.item_volume_label.grid(row=3, column=5, sticky=tk.W)
         self.item_volume_entry = tk.OptionMenu(self.grid_frame, self.volume_value_inside, *Lists.volume_options)
-        self.item_volume_entry.grid(row=3, column=7, sticky=tk.W)
+        self.item_volume_entry.grid(row=3, column=5, sticky=tk.E)
+
+        self.item_tax_label = Label(self.grid_frame, text="BTW:")
+        self.item_tax_inside = tkinter.StringVar(self.grid_frame)
+        self.item_tax_inside.set("H")
+        self.item_tax_label.grid(row=3, column=6, sticky=tk.W)
+        self.item_tax_entry = tk.OptionMenu(self.grid_frame, self.item_tax_inside, *Lists.tax_options)
+        self.item_tax_entry.grid(row=3, column=6, sticky=tk.E, padx=65, pady=5)
 
         self.submit_button = Button(self.grid_frame, text="Maak product aan", command=self.submit_product, anchor="center",
                                     justify='center', bg='green')
@@ -280,6 +287,14 @@ class UserInterface:
         country = self.country_value_inside.get()
         beer_type = self.type_value_inside.get()
         aging_method = self.aging_value_inside.get()
+        tax_value = self.item_tax_inside.get()
+        if tax_value == 'H':
+            taxable = True
+        elif tax_value == 'L':
+            taxable = True
+        elif tax_value == '0':
+            taxable = False
+
 
         if brew_year != '' and item_volume != '' and brand in Lists.brand_options and brand != "Overig":
             shopify_title = brand + " " + title + " " + brew_year + " - " + item_volume
@@ -309,6 +324,7 @@ class UserInterface:
                               "price": price,
                               "grams": item_weight,
                               "inventory_management": "shopify",
+                              "taxable": taxable,
                           }],
                           "metafields": [
                               {"key": "brouwjaar", "value": brew_year, "type": "number_integer", "namespace": "custom"},

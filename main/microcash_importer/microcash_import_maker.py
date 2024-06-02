@@ -33,7 +33,10 @@ class MicrocashProductMaker:
                 print(beer_counter)
                 cleaned_emballage_text = re.sub(r'[^0-9.,]', '', beer['tags'])
                 time.sleep(1)
-                btw_groep = self.get_product_BTW_value(str(beer['id']))
+                if beer['variants'][0]['taxable'] == False:
+                    btw_groep = '0'
+                else:
+                    btw_groep = self.get_product_BTW_value(str(beer['id']))
                 merk = self.get_product_brand(str(beer['id']))
                 groep = self.get_product_type(str(beer['id']))
                 time.sleep(0.2)
