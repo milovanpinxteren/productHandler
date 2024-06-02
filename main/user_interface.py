@@ -277,6 +277,10 @@ class UserInterface:
 
         available_amount = self.available_amount_entry.get()
         item_weight = self.item_weight_entry.get().replace(',', '.')
+        try:
+            item_weight = float(item_weight)
+        except ValueError:
+            item_weight = 300
         item_volume = self.volume_value_inside.get()
         percentage = self.item_percentage_entry.get().replace(',', '.')
         body_html = self.generate_html(description, item_volume, percentage)
@@ -323,7 +327,7 @@ class UserInterface:
                               "barcode": barcode,
                               "price": price,
                               "grams": item_weight,
-                              "inventory_management": "shopify",
+                              "inventory_management": "SHOPIFY",
                               "taxable": taxable,
                           }],
                           "metafields": [
