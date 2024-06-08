@@ -63,6 +63,7 @@ class ProductCreator:
             "input": {
                 "title": data['title'],
                 "bodyHtml": data['body_html'],
+                "published": True,
                 "tags": data['tags'],
                 "variants": [{
                     "barcode": data['variants'][0]['barcode'],
