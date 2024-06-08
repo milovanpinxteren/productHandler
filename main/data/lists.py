@@ -103,7 +103,8 @@ class Lists:
         'métaphore',
         'Elegast',
         'Brasserie du Bas',
-        "D'n Droak"
+        "D'n Droak",
+        'Maasdorst'
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
