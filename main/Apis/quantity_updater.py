@@ -20,3 +20,4 @@ class QuantityUpdater:
             return True
         else:
             return False
+

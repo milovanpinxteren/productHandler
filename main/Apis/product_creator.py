@@ -69,6 +69,7 @@ class ProductCreator:
                     "barcode": data['variants'][0]['barcode'],
                     "price": data['variants'][0]['price'],
                     "weight": data['variants'][0]['grams'],
+                    "weightUnit": "GRAMS",
                     "inventoryManagement": data['variants'][0]['inventory_management'],
                     "taxable": data['variants'][0]['taxable']
                 }],
