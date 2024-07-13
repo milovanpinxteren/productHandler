@@ -1,8 +1,11 @@
+import os
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+import dotenv
 
 
 class EmailSender:
@@ -33,7 +36,7 @@ class EmailSender:
         smtp_server = 'smtp.hostinger.com'
         smtp_port = 587  # Port for TLS
         smtp_username = 'info@ristaiuto.it'
-        smtp_password = 'Afbhsghkjl562!'
+        smtp_password = os.environ["MAIL_PASSWORD"]
 
         # Create an SMTP server connection
         server = smtplib.SMTP(smtp_server, smtp_port)
