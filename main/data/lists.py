@@ -104,7 +104,8 @@ class Lists:
         'Elegast',
         'Brasserie du Bas',
         "D'n Droak",
-        'Maasdorst'
+        'Maasdorst',
+        "Baxbier"
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
