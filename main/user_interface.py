@@ -2,7 +2,7 @@ import tkinter
 import tkinter as tk
 from tkinter import Label, Entry, Button
 import cv2
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageEnhance
 import datetime
 import os
 from tkcalendar import DateEntry
@@ -36,10 +36,10 @@ class UserInterface:
         self.productID = None
         self.image_counter = 0
 
-        for i in range(8):
-            self.grid_frame.columnconfigure(i, weight=1, uniform="foo")
-        for i in range(20):
-            self.grid_frame.rowconfigure(i, weight=1, uniform="foo")
+        # for i in range(6):
+        #     self.grid_frame.columnconfigure(i, weight=1, uniform="foo")
+        # for i in range(4):
+        #     self.grid_frame.rowconfigure(i, weight=1, uniform="foo")
 
         for i in range(20):
             for j in range(8):
@@ -64,10 +64,18 @@ class UserInterface:
         """ Get frame from the video stream and show it in Tkinter """
         ok, frame = self.vs.read()  # read frame from video stream
         if ok:  # frame captured without any errors
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-            cropped_image = cv2image[:, 100:(cv2image.shape[1] - 100), :]
+            frame = cv2.convertScaleAbs(frame, alpha=1.12, beta=2)
+            # frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
 
-            self.current_image = Image.fromarray(cropped_image) # convert image for PIL
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            cropped_image = cv2image[:, 150:(cv2image.shape[1] - 150), :]
+
+            pil_image = Image.fromarray(cropped_image)
+            enhancer = ImageEnhance.Sharpness(pil_image)
+            enhanced_image = enhancer.enhance(2.0)
+            # resized_image = enhanced_image.resize((640, 480))
+
+            self.current_image = enhanced_image # convert image for PIL
             imgtk = ImageTk.PhotoImage(image=self.current_image)  # convert image for tkinter
             self.camera_label.imgtk = imgtk  # anchor imgtk so it does not be deleted by garbage-collector
             self.camera_label.config(image=imgtk)  # show the image
@@ -202,17 +210,25 @@ class UserInterface:
                                     justify='center', bg='green')
         self.submit_button.grid(row=4, column=0, padx=10, pady=5, sticky="we", columnspan=8)
 
+
+        self.vs = cv2.VideoCapture(0)
+        self.vs.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+        self.vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
+        if self.vs.get(cv2.CAP_PROP_AUTOFOCUS) != 1:
+            self.vs.set(cv2.CAP_PROP_AUTOFOCUS, 1)
         self.camera_label = Label(self.grid_frame)
-        self.camera_label.grid(row=5, column=0, columnspan=4, rowspan=12)
+        self.camera_label.grid(row=5, column=0, columnspan=4, rowspan=12, sticky="nsew")
+        self.video_loop()
+
         self.photo_btn = tk.Button(self.grid_frame, text="Verzend naar Shopify", command=self.take_snapshot, state="disabled")
         self.photo_btn.grid(row=8, column=4)
+
 
         self.feedback_label = tk.Label(self.grid_frame,
                                        text="Druk op knop om foto naar shopify te uploaden. (Eerst moet product gemaakt zijn)")
         self.feedback_label.grid(row=9, column=4, columnspan=5)
 
-        self.vs = cv2.VideoCapture(0)
-        self.video_loop()
+
 
         self.check_barcode_existment_label = Label(self.grid_frame, text="Barcode/titel voor check in systeem:")
         self.check_barcode_existment_label.grid(row=17, column=0, sticky=tk.W)
