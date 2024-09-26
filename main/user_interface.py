@@ -2,6 +2,7 @@ import tkinter
 import tkinter as tk
 from tkinter import Label, Entry, Button
 import cv2
+import requests
 from PIL import Image, ImageTk, ImageEnhance
 import datetime
 import os
@@ -16,7 +17,11 @@ from Apis.existment_checker import ExistmentChecker
 from label_printer.print_label_selection import SelectionLabelPrinter
 from untappd_getter import UntappdGetter
 from microcash_importer.microcash_import_maker import MicrocashProductMaker
-
+import re
+import random
+from dotenv import load_dotenv
+import os
+import json
 
 class UserInterface:
     def __init__(self):
@@ -283,6 +288,25 @@ class UserInterface:
         self.next_product_button = tk.Button(self.grid_frame, text="Volgend Product", command=self.next_product, bg='orange')
         self.next_product_button.grid(row=18, column=0, padx=10, pady=5, sticky="we", columnspan=8)
 
+    def get_ai_answer(self, text):
+        load_dotenv()
+        eden_ai_token = os.environ["EDEN_AI_TOKEN"]
+        edenAI_headers = {
+            "Authorization": eden_ai_token}
+        url = "https://api.edenai.run/v2/text/generation"
+        providers_list = ['openai', 'cohere']  # mistral
+        random_provider = random.choice(providers_list)
+        payload = {
+            "providers": random_provider,
+            "text": text,
+            "temperature": 0.6,
+            "max_tokens": 500,
+        }
+        response = requests.post(url, json=payload, headers=edenAI_headers)
+        result = json.loads(response.text)
+        # print(result)
+        return result, random_provider
+
     def submit_product(self):
         self.image_counter = 0
         barcode = self.barcode_entry.get()
@@ -315,30 +339,62 @@ class UserInterface:
         elif tax_value == '0':
             taxable = False
 
+        if beer_type != 'Overig':
+            beer_type_str = ' ' + beer_type
+        else:
+            beer_type_str = ''
+
 
         if brew_year != '' and item_volume != '' and brand in Lists.brand_options and brand != "Overig":
-            shopify_title = brand + " " + title + " " + brew_year + " - " + item_volume
-        elif brew_year != '' and item_volume != '' and brand == "Overig":
-            shopify_title = title + " " + brew_year + " - " + item_volume
+            shopify_title = brand + " " + title + " " + brew_year + beer_type_str + " - " + item_volume
+            seo_title = brand + " " + title + " " + brew_year + beer_type_str + " bier" + " - " + item_volume
 
+        elif brew_year != '' and item_volume != '' and brand == "Overig":
+            shopify_title = title + " " + brew_year + beer_type_str + " - " + item_volume
+            seo_title = title + " " + brew_year + beer_type_str + " bier" + " - " + item_volume
         elif brew_year != '' and item_volume == '' and brand == "Overig":
-            shopify_title = title + " " + brew_year
+            shopify_title = title + " " + brew_year + beer_type_str
+            seo_title = title + " " + brew_year + beer_type_str + ' bier'
         elif brew_year != '' and item_volume == '' and brand in Lists.brand_options and brand != "Overig":
-            shopify_title = brand + " " + title + " " + brew_year
+            shopify_title = brand + " " + title + " " + brew_year + beer_type_str
+            seo_title = brand + " " + title + " " + brew_year + beer_type_str + ' bier'
 
         elif brew_year == '' and item_volume != '' and brand == "Overig":
-            shopify_title = title + " - " + item_volume
+            shopify_title = title + beer_type_str + " - " + item_volume
+            seo_title = title + beer_type_str + " bier" + " - " + item_volume
         elif brew_year == '' and item_volume != '' and brand in Lists.brand_options and brand != "Overig":
-            shopify_title = brand + " " + title + " - " + item_volume
-
+            shopify_title = brand + " " + title + beer_type_str + " - " + item_volume
+            seo_title = brand + " " + title + beer_type_str + ' bier' + " - " + item_volume
         elif brew_year == '' and item_volume == '' and brand == "Overig":
-            shopify_title = title
+            shopify_title = title + beer_type_str
+            seo_title = title + beer_type_str + ' bier'
         elif brew_year == '' and item_volume == '' and brand in Lists.brand_options and brand != "Overig":
-            shopify_title = brand + " " + title
+            shopify_title = brand + " " + title + beer_type_str
+            seo_title = brand + " " + title + beer_type_str + ' bier'
+
+        seo_title = re.sub(r'\s{2,}', ' ', seo_title)
+        shopify_title = re.sub(r'\s{2,}', ' ', shopify_title)
+        new_handle = seo_title.replace(' ', '-')
+        new_handle = re.sub(r'-{2,}', '-', new_handle)
+
+        ai_response, provider = self.get_ai_answer(
+            f"schrijf een korte SEO/Meta description van max 2 zinnen over {seo_title}")
+        if 'detail' not in ai_response:
+            prompt_answer = ai_response[provider]['generated_text']
+            seo_description = "\n".join([line.strip() for line in prompt_answer.splitlines() if line.strip()])
+            cleaned_seo_description = seo_description.replace('"', '')
+        else:
+            self.feedback_label.config(
+                text=f"AI model fout: {ai_response}")
 
         data_to_create = {'title': shopify_title,
+                          'handle': new_handle,
                           "body_html": body_html,
                           "tags": statiegeld,
+                          "seo": {
+                              "description": cleaned_seo_description,
+                              "title": seo_title
+                          },
                           "variants": [{
                               "barcode": barcode,
                               "price": price,
