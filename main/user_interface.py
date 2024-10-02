@@ -447,28 +447,58 @@ class UserInterface:
         search_query = self.brand_search_entry.get().lower()
         list_to_filter = Lists.brand_options
         filtered_brands = [item for item in list_to_filter if search_query in item.lower()]
-        menu = self.item_brand_entry["menu"]
-        menu.delete(0, "end")
+
+        # Clear existing menu items
+        self.item_brand_entry['menu'].delete(0, 'end')
+
+        # Add filtered options to the OptionMenu
         for brand in filtered_brands:
-            self.brand_value_inside.set(brand)
+            self.item_brand_entry['menu'].add_command(label=brand,
+                                                      command=tk._setit(self.brand_value_inside, brand))
+
+        # Automatically set the first matching value, or reset if no match
+        if filtered_brands:
+            self.brand_value_inside.set(filtered_brands[0])
+        else:
+            self.brand_value_inside.set('Overig')
 
     def filter_countries(self, event):
         search_query = self.country_search_entry.get().lower()
         list_to_filter = Lists.country_options
         filtered_countries = [item for item in list_to_filter if search_query in item.lower()]
-        menu = self.item_country_entry["menu"]
-        menu.delete(0, "end")
+
+        # Clear existing menu items
+        self.item_country_entry['menu'].delete(0, 'end')
+
+        # Add filtered options to the OptionMenu
         for country in filtered_countries:
-            self.country_value_inside.set(country)
+            self.item_country_entry['menu'].add_command(label=country,
+                                                        command=tk._setit(self.country_value_inside, country))
+
+        # Automatically set the first matching value, or reset if no match
+        if filtered_countries:
+            self.country_value_inside.set(filtered_countries[0])
+        else:
+            self.country_value_inside.set('Overig')
 
     def filter_types(self, event):
         search_query = self.type_search_entry.get().lower()
         list_to_filter = Lists.beer_type_options
         filtered_types = [item for item in list_to_filter if search_query in item.lower()]
-        menu = self.item_type_entry["menu"]
-        menu.delete(0, "end")
-        for type in filtered_types:
-            self.type_value_inside.set(type)
+
+        # Clear existing menu items
+        self.item_type_entry['menu'].delete(0, 'end')
+
+        # Add filtered options to the OptionMenu
+        for type_option in filtered_types:
+            self.item_type_entry['menu'].add_command(label=type_option,
+                                                     command=tk._setit(self.type_value_inside, type_option))
+
+        # Automatically set the first matching value, or reset if no match
+        if filtered_types:
+            self.type_value_inside.set(filtered_types[0])
+        else:
+            self.type_value_inside.set('Overig')
 
     def update_untappd(self):
         beer_url = self.check_barcode_existment_feedback_label.cget("text")
