@@ -117,7 +117,7 @@ class Lists:
     beer_type_options = ['Barleywine', 'Bock', 'Blond', 'Dubbel', 'Fruitbier', 'IPA', 'Tripel', 'Saison Ale', 'Lager',
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
                          'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider', 'Ijsbock', 'Ale', 'Session', 'Cadeaupakket',
-                         'DIPA', 'TIPA', 'QIPA', 'NEIPA']
+                         'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale']
 
     aging_methods = ['Barrel Aged', 'Niet Barrel Aged']
 
