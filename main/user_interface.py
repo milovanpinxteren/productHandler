@@ -66,34 +66,44 @@ class UserInterface:
         self.root.mainloop()
 
     def video_loop(self):
-        """ Get frame from the video stream and show it in Tkinter """
-        ok, frame = self.vs.read()  # read frame from video stream
-        if ok:  # frame captured without any errors
-            frame = cv2.convertScaleAbs(frame, alpha=1.12, beta=2)
-            # frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
+        """ Capture frame from the video stream, process it, and display a scaled-down version in Tkinter """
+        ok, frame = self.vs.read()  # Capture a frame from the webcam
+        if ok:
+            # Store the full-resolution frame in self.current_image
+            full_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  # Convert to RGBA
+            self.current_image = Image.fromarray(full_frame)  # Save full frame for snapshots
 
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-            cropped_image = cv2image[:, 150:(cv2image.shape[1] - 150), :]
+            # Get display size for resizing, with smaller scaling factors
+            display_width = max(int(self.root.winfo_width() * 0.5), 480)  # Scale width to 50% of window or min 480
+            display_height = max(int(self.root.winfo_height() * 0.5), 360)  # Scale height to 50% of window or min 360
 
-            pil_image = Image.fromarray(cropped_image)
-            enhancer = ImageEnhance.Sharpness(pil_image)
-            enhanced_image = enhancer.enhance(2.0)
-            # resized_image = enhanced_image.resize((640, 480))
+            # Calculate aspect ratio of the full frame
+            original_height, original_width, _ = full_frame.shape
+            aspect_ratio = original_width / original_height
 
-            self.current_image = enhanced_image # convert image for PIL
-            imgtk = ImageTk.PhotoImage(image=self.current_image)  # convert image for tkinter
-            self.camera_label.imgtk = imgtk  # anchor imgtk so it does not be deleted by garbage-collector
-            self.camera_label.config(image=imgtk)  # show the image
+            # Adjust display dimensions to maintain aspect ratio
+            if display_width / display_height > aspect_ratio:
+                display_width = int(display_height * aspect_ratio)
+            else:
+                display_height = int(display_width / aspect_ratio)
+
+            # Resize frame for display
+            resized_frame = cv2.resize(full_frame, (display_width, display_height), interpolation=cv2.INTER_AREA)
+
+            # Convert resized frame to PIL Image for display in Tkinter
+            display_image = Image.fromarray(resized_frame)
+
+            # Update Tkinter label
+            imgtk = ImageTk.PhotoImage(image=display_image)
+            self.camera_label.imgtk = imgtk  # Anchor to prevent garbage collection
+            self.camera_label.config(image=imgtk)  # Display resized image
+
+        # Schedule the next frame
         self.root.after(30, self.video_loop)
 
     def take_snapshot(self):
         """ Take snapshot and save it to the file """
         ts = datetime.datetime.now()  # grab the current timestamp
-        filename = "{}.jpg".format(ts.strftime("%Y-%m-%d_%H-%M-%S"))  # construct filename
-        # p = os.path.join("C:/Downloads", filename)  # construct output path
-        # self.current_image.save(p, "PNG")  # save image as jpeg file
-        # print("[INFO] saved {}".format(filename))
-
         timestamp = ts.strftime("%Y-%m-%d_%H-%M-%S")
 
         image_uploaded, status_code = self.image_uploader.upload_image_to_shopify(self.productID, self.current_image)
@@ -216,11 +226,18 @@ class UserInterface:
         self.submit_button.grid(row=4, column=0, padx=10, pady=5, sticky="we", columnspan=8)
 
 
-        self.vs = cv2.VideoCapture(0)
-        self.vs.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
-        self.vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
-        if self.vs.get(cv2.CAP_PROP_AUTOFOCUS) != 1:
-            self.vs.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+        self.vs = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.vs.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
+        self.vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
+        self.vs.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+        width = self.vs.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.vs.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        autofocus = self.vs.get(cv2.CAP_PROP_AUTOFOCUS)
+
+        print(f"Resolution: {width}x{height}")
+        print(f"Autofocus enabled: {bool(autofocus)}")
+        # if self.vs.get(cv2.CAP_PROP_AUTOFOCUS) != 1:
+        #     self.vs.set(cv2.CAP_PROP_AUTOFOCUS, 1)
         self.camera_label = Label(self.grid_frame)
         self.camera_label.grid(row=5, column=0, columnspan=4, rowspan=12, sticky="nsew")
         self.video_loop()
