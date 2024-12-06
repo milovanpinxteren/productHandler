@@ -326,8 +326,9 @@ class UserInterface:
         #     payload["model"] = "command"  # Adjust based on available models
         response = requests.post(url, json=payload, headers=edenAI_headers)
         result = json.loads(response.text)
-        # print(result)
-        return result, random_provider
+        print(result)
+        provider = next(iter(result))
+        return result, provider
 
     def submit_product(self):
         self.image_counter = 0
