@@ -311,7 +311,9 @@ class UserInterface:
         edenAI_headers = {
             "Authorization": eden_ai_token}
         url = "https://api.edenai.run/v2/text/generation"
-        providers_list = ['openai', 'cohere']  # mistral
+        providers_list = ['openai']  # mistral
+        # providers_list = ['cohere/command-light']  # mistral
+
         random_provider = random.choice(providers_list)
         payload = {
             "providers": random_provider,
@@ -319,6 +321,9 @@ class UserInterface:
             "temperature": 0.6,
             "max_tokens": 500,
         }
+
+        # if random_provider == "cohere":
+        #     payload["model"] = "command"  # Adjust based on available models
         response = requests.post(url, json=payload, headers=edenAI_headers)
         result = json.loads(response.text)
         # print(result)
