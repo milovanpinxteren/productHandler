@@ -5,7 +5,7 @@ import base64
 from io import BytesIO
 
 from dotenv import load_dotenv
-from rembg import remove
+# from rembg import remove
 from PIL import Image
 import numpy as np
 import cv2
