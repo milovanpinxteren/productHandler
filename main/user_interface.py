@@ -357,10 +357,13 @@ class UserInterface:
         tax_value = self.item_tax_inside.get()
         if tax_value == 'H':
             taxable = True
+            btw_tag = 'BTW Hoog'
         elif tax_value == 'L':
             taxable = True
+            btw_tag = 'BTW Laag'
         elif tax_value == '0':
             taxable = False
+            btw_tag = 'BTW 0'
 
         if beer_type != 'Overig':
             beer_type_str = ' ' + beer_type
@@ -403,7 +406,7 @@ class UserInterface:
         ai_response, provider = self.get_ai_answer(
             f"schrijf een korte SEO/Meta description van max 2 zinnen over {seo_title}")
         if 'detail' not in ai_response:
-            prompt_answer = ai_response[provider]['generated_text']
+            prompt_answer = ai_response[provider]['standardized_response']['generated_text']
             seo_description = "\n".join([line.strip() for line in prompt_answer.splitlines() if line.strip()])
             cleaned_seo_description = seo_description.replace('"', '')
         else:
@@ -413,7 +416,7 @@ class UserInterface:
         data_to_create = {'title': shopify_title,
                           'handle': new_handle,
                           "body_html": body_html,
-                          "tags": statiegeld,
+                          "tags": statiegeld + ', ' + btw_tag,
                           "seo": {
                               "description": cleaned_seo_description,
                               "title": seo_title

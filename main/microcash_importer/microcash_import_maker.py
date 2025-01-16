@@ -71,7 +71,7 @@ class MicrocashProductMaker:
         beerlist = SelectionLabelPrinter().get_beers_from_shopify(query)
         return beerlist
 
-    def get_product_BTW_value(self, productID):
+    def  get_product_BTW_value(self, productID):
         load_dotenv()
         self.access_token = os.environ["ACCESS_TOKEN"]
         headers = {"Accept": "application/json", "Content-Type": "application/json",

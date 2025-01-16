@@ -86,7 +86,74 @@ class ProductCreator:
                 variant = product['variants']['edges'][0]['node']
                 variantID = re.sub(r'\D', '', variant['id'])
                 inventory_item_id = re.sub(r'\D', '', variant['inventoryItem']['id'])
+                self.publish_product_to_all_channels(response_data['data']['productCreate']['product']['id'])
                 return productID, variantID, inventory_item_id
         else:
             print('failed', response.status_code)
             return None
+
+
+    def publish_product_to_all_channels(self, product_id):
+        """
+        Publishes a product to all hardcoded sales channels.
+        """
+        PUBLICATIONS = [
+            {'node': {'id': 'gid://shopify/Publication/188717662546', 'name': 'Online Store'}},
+            {'node': {'id': 'gid://shopify/Publication/188717695314', 'name': 'Point of Sale'}},
+            {'node': {'id': 'gid://shopify/Publication/188717760850', 'name': 'Shop'}},
+            {'node': {'id': 'gid://shopify/Publication/197279678802', 'name': 'Inbox'}},
+            {'node': {'id': 'gid://shopify/Publication/197467734354', 'name': 'Google & YouTube'}},
+            {'node': {'id': 'gid://shopify/Publication/197766807890', 'name': 'Facebook & Instagram'}},
+        ]
+        
+        for publication in PUBLICATIONS:
+            publication_id = publication['node']['id']
+            publication_name = publication['node']['name']
+            # print(f"Publishing to {publication_name} (ID: {publication_id})")
+    
+            mutation = """
+                mutation publishablePublish($id: ID!, $input: [PublicationInput!]!) {
+                  publishablePublish(id: $id, input: $input) {
+                    shop {
+                      publicationCount
+                    }
+                    userErrors {
+                      field
+                      message
+                    }
+                  }
+                }
+            """
+            variables = {
+                "id": product_id,
+                "input": {"publicationId": publication_id}
+            }
+            response = self.execute_graphql_query(mutation, variables)
+            if response.get('errors'):
+                print(f"Errors: {response['errors']}")
+            elif response['data']['publishablePublish']['userErrors']:
+                print(f"User Errors: {response['data']['publishablePublish']['userErrors']}")
+            else:
+                print(f"Product {product_id} published to {publication_name} successfully.")
+
+    def execute_graphql_query(self, query, variables=None):
+        """
+        Executes a GraphQL query or mutation against the Shopify API.
+        """
+        access_token = os.environ["ACCESS_TOKEN"]
+        shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2023-10/graphql.json'
+        headers = {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": access_token
+        }
+
+        response = requests.post(
+            shopify_store_url,
+            json={"query": query, "variables": variables or {}},
+            headers=headers
+        )
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception(f"GraphQL query failed with status code {response.status_code}: {response.text}")
