@@ -4,7 +4,7 @@ import os
 import re
 class ProductCreator:
 
-    def create_product_on_shopify(self, data):
+    def create_product_on_shopify(self, data, btw_tag):
         print('create product')
         load_dotenv()
         access_token = os.environ["ACCESS_TOKEN"]
@@ -87,11 +87,53 @@ class ProductCreator:
                 variantID = re.sub(r'\D', '', variant['id'])
                 inventory_item_id = re.sub(r'\D', '', variant['inventoryItem']['id'])
                 self.publish_product_to_all_channels(response_data['data']['productCreate']['product']['id'])
+                if btw_tag == 'BTW Hoog':
+                    collection_id = "gid://shopify/Collection/637676978514"
+                elif btw_tag == 'BTW Laag':
+                    collection_id = "gid://shopify/Collection/637677764946"
+                if btw_tag == 'BTW 0':
+                    collection_id = "gid://shopify/Collection/637677797714"
+                self.add_product_to_collection(collection_id, response_data['data']['productCreate']['product']['id'])
                 return productID, variantID, inventory_item_id
         else:
             print('failed', response.status_code)
             return None
 
+    def add_product_to_collection(self, collection_id, product_id):
+        query = """
+        mutation collectionAddProducts($id: ID!, $productIds: [ID!]!) {
+            collectionAddProducts(id: $id, productIds: $productIds) {
+                collection {
+                    id
+                    title
+                }
+                userErrors {
+                    field
+                    message
+                }
+            }
+        }
+        """
+        # Variables for the mutation
+        variables = {
+            "id": collection_id,
+            "productIds": [product_id]
+        }
+
+        try:
+            # Execute the query using the provided function
+            response_data = self.execute_graphql_query(query, variables)
+
+            # Handle the response
+            if "errors" in response_data:
+                print("Errors:", response_data["errors"])
+            elif response_data.get("data", {}).get("collectionAddProducts", {}).get("userErrors"):
+                print("User Errors:", response_data["data"]["collectionAddProducts"]["userErrors"])
+            else:
+                collection = response_data["data"]["collectionAddProducts"]["collection"]
+                print(f"Product added to collection: {collection['title']} (ID: {collection['id']})")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def publish_product_to_all_channels(self, product_id):
         """

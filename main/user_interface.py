@@ -440,7 +440,7 @@ class UserInterface:
 
         try:
             self.productID, self.variantID, self.inventory_item_id = self.product_creator.create_product_on_shopify(
-                data_to_create)
+                data_to_create, btw_tag)
             if self.productID:
                 quantity_updated = self.quantity_updater.update_quantity(self.inventory_item_id, available_amount)
                 if quantity_updated:
