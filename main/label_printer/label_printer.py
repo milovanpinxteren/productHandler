@@ -25,9 +25,9 @@ class LabelPrinter:
         d = ImageDraw.Draw(img)
         wrapped_text = textwrap.fill(product_title, width=40)
 
-        d.text((10, 10), wrapped_text, fill=(0, 0, 0), font=title_font)
-        d.text((10, 65), product_price, fill=(0, 0, 0), font=price_font)
-        d.text((260, 65), 'Untappd: ' + untappd_score, fill=(0, 0, 0), font=untappd_font)
+        d.text((10, 1), wrapped_text, fill=(0, 0, 0), font=title_font)
+        d.text((10, 71), product_price, fill=(0, 0, 0), font=price_font)
+        d.text((260, 68), 'Untappd: ' + untappd_score, fill=(0, 0, 0), font=untappd_font)
         img = img.resize((696, 271))
 
         # Convert image to raster
