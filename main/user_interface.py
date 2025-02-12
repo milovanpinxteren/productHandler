@@ -311,7 +311,7 @@ class UserInterface:
         edenAI_headers = {
             "Authorization": eden_ai_token}
         url = "https://api.edenai.run/v2/text/generation"
-        providers_list = ['openai']  # mistral
+        providers_list = ['cohere']  # mistral
         # providers_list = ['cohere/command-light']  # mistral
 
         random_provider = random.choice(providers_list)
@@ -406,7 +406,7 @@ class UserInterface:
         ai_response, provider = self.get_ai_answer(
             f"schrijf een korte SEO/Meta description van max 2 zinnen over {seo_title}")
         if 'detail' not in ai_response:
-            prompt_answer = ai_response[provider]['standardized_response']['generated_text']
+            prompt_answer = ai_response[provider]['generated_text']
             seo_description = "\n".join([line.strip() for line in prompt_answer.splitlines() if line.strip()])
             cleaned_seo_description = seo_description.replace('"', '')
         else:
