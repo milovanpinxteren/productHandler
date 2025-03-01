@@ -310,8 +310,8 @@ class UserInterface:
         eden_ai_token = os.environ["EDEN_AI_TOKEN"]
         edenAI_headers = {
             "Authorization": eden_ai_token}
-        url = "https://api.edenai.run/v2/text/generation"
-        providers_list = ['cohere']  # mistral
+        url = "https://api.edenai.run/v2/text/chat"
+        providers_list = ['google']  # mistral
         # providers_list = ['cohere/command-light']  # mistral
 
         random_provider = random.choice(providers_list)
