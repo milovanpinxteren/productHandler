@@ -112,11 +112,12 @@ class Lists:
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
                        "Tsjechië", "Verenigde Staten", "Overig", "Brazilië", 'Roemenië', 'Canada', 'Polen',
                        'Zweden', 'Finland', 'Oostenrijk', 'Oekraïne', 'Griekenland', 'Italië', 'Frankrijk',
-                        'Noorwegen', 'Chicago']
+                       'Noorwegen', 'Chicago']
 
     beer_type_options = ['Barleywine', 'Bock', 'Blond', 'Dubbel', 'Fruitbier', 'IPA', 'Tripel', 'Saison Ale', 'Lager',
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
-                         'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider', 'Ijsbock', 'Ale', 'Session', 'Cadeaupakket',
+                         'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider', 'Ijsbock', 'Ale', 'Session',
+                         'Cadeaupakket',
                          'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale']
 
     aging_methods = ['Barrel Aged', 'Niet Barrel Aged']
@@ -124,6 +125,8 @@ class Lists:
     volume_options = ["20 CL", "25 CL", "30 CL", "33 CL", "35 CL", "37.5 CL", "44 CL", "47.3 CL (1 pint)", "50 CL",
                       "65 CL", "75 CL", "1 L", "1.5 L", "3 L", "5 L", "10L (fust)", "20L (fust)", "30L (fust)"]
 
-    statiegeld_options = ['0', '0.10', '0.15', '0.20', '0.25', '0.35', '0.40', '0.50']
+    statiegeld_options = ['0', '0.10', '0.15', '0.20', '0.25', '0.30', '0.40', '0.50', '0.60', '0.70', '0.80', '0.90',
+                          '1.00', '1.10', '1.20', '1.30', '1.40', '1.50', '1.60', '1.70', '1.80', '1.90', '2.00',
+                          '2.10', '2.20', '2.30', '2.40', '2.50']
 
     tax_options = ['H', 'L', '0']
