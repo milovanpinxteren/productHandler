@@ -118,7 +118,7 @@ class Lists:
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
                          'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider', 'Ijsbock', 'Ale', 'Session',
                          'Cadeaupakket',
-                         'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale']
+                         'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale', 'Wijn']
 
     aging_methods = ['Barrel Aged', 'Niet Barrel Aged']
 
