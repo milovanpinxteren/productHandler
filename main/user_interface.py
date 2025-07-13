@@ -364,6 +364,7 @@ class UserInterface:
         elif tax_value == '0':
             taxable = False
             btw_tag = 'BTW 0'
+        btw_decimal_dict = {'BTW Hoog': 0.21, 'BTW Laag': 0.09, 'BTW 0': 0.00}
 
         if beer_type != 'Overig':
             beer_type_str = ' ' + beer_type
@@ -435,7 +436,9 @@ class UserInterface:
                               {"key": "inhoud", "value": item_volume, "type": "single_line_text_field", "namespace": "custom"},
                               {"key": "soort_bier", "value": beer_type, "type": "single_line_text_field", "namespace": "custom"},
                               {"key": "rijpingsmethode", "value": aging_method, "type": "single_line_text_field", "namespace": "custom"},
-                              {"key": "alcoholpercentage", "value": percentage, "type": "number_decimal", "namespace": "custom"}
+                              {"key": "alcoholpercentage", "value": percentage, "type": "number_decimal", "namespace": "custom"},
+                              {"key": "deposit", "value": str(self.statiegeld_value_inside.get()), "type": "number_decimal", "namespace": "custom"},
+                              {"key": "tax", "value": str(btw_decimal_dict.get(btw_tag)), "type": "number_decimal", "namespace": "custom"},
                               ]}
 
         try:
