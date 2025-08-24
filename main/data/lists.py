@@ -106,7 +106,10 @@ class Lists:
         "D'n Droak",
         'Maasdorst',
         "Baxbier",
-        "Revolution"
+        "Revolution",
+        "West Coast IPA",
+        "Kombucha"
+
     ]
 
     country_options = ["België", "Denemarken", "Duitsland", "Engeland", "Estland", "Ierland", "Nederland", "Spanje",
