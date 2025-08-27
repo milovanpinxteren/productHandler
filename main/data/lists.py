@@ -107,8 +107,6 @@ class Lists:
         'Maasdorst',
         "Baxbier",
         "Revolution",
-        "West Coast IPA",
-        "Kombucha"
 
     ]
 
@@ -121,7 +119,8 @@ class Lists:
                          'Lambiek/Geuze', 'Medebier', 'Pilsner', 'Porter', 'Quadrupel', 'Stout', 'Sour', 'Overig',
                          'Weizen', 'Witbier', 'Alcoholvrij', 'Amber', 'Cider', 'Ijsbock', 'Ale', 'Session',
                          'Cadeaupakket',
-                         'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale', 'Wijn', 'Glazen']
+                         'DIPA', 'TIPA', 'QIPA', 'NEIPA', 'Champagnebier', 'Wild Ale', 'Wijn', 'Glazen',
+                         "West Coast IPA", "Kombucha"]
 
     aging_methods = ['Barrel Aged', 'Niet Barrel Aged']
 
