@@ -310,14 +310,19 @@ class UserInterface:
         eden_ai_token = os.environ["EDEN_AI_TOKEN"]
         edenAI_headers = {
             "Authorization": eden_ai_token}
-        url = "https://api.edenai.run/v2/text/chat"
-        providers_list = ['google']  # mistral
+        # url = "https://api.edenai.run/v2/text/chat"
+        url = "https://api.edenai.run/v2/llm/chat"
+
+        providers_list = ['google/gemini-2.5-flash']  # mistral
         # providers_list = ['cohere/command-light']  # mistral
 
         random_provider = random.choice(providers_list)
         payload = {
-            "providers": random_provider,
-            "text": text,
+            "model": random_provider,
+            # "text": text,
+            "messages": [
+                {"role": "user", "content": text}
+            ],
             "temperature": 0.6,
             "max_tokens": 500,
         }
@@ -405,9 +410,10 @@ class UserInterface:
         new_handle = re.sub(r'-{2,}', '-', new_handle)
 
         ai_response, provider = self.get_ai_answer(
-            f"schrijf een korte SEO/Meta description van max 2 zinnen over {seo_title}")
+            f"schrijf een korte SEO/Meta description van max 2 zinnen over {seo_title}. Geef maximaal een optie, en zorg dat de tekst meteen gekopieerd kan worden, dus geef geen extra uitleg.")
         if 'detail' not in ai_response:
-            prompt_answer = ai_response[provider]['generated_text']
+            # prompt_answer = ai_response[provider]['generated_text']
+            prompt_answer = ai_response['choices'][0]['message']['content']
             seo_description = "\n".join([line.strip() for line in prompt_answer.splitlines() if line.strip()])
             cleaned_seo_description = seo_description.replace('"', '')
         else:
