@@ -2,13 +2,15 @@ import requests
 from dotenv import load_dotenv
 import os
 import re
+
+
 class ProductCreator:
 
     def create_product_on_shopify(self, data, btw_tag):
         print('create product')
         load_dotenv()
         access_token = os.environ["ACCESS_TOKEN"]
-        shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2023-10/graphql.json'
+        shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2025-07/graphql.json'
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -16,62 +18,38 @@ class ProductCreator:
         }
 
         mutation = """
-        mutation createProduct($input: ProductInput!) {
-            productCreate(input: $input) {
-                product {
-                    id
-                    variants(first: 1) {
-                        edges {
-                            node {
-                                id
-                                inventoryItem {
-                                    id
-                                }
-                            }
-                        }
-                    }
-                }
-                userErrors {
-                    field
-                    message
-                }
+        mutation createProduct($product: ProductCreateInput!) {
+          productCreate(product: $product) {
+            product {
+              id
+              variants(first: 1) { nodes { id inventoryItem { id } } }
             }
+            userErrors { field message }
+          }
         }
         """
 
-        # Prepare the input data
-        product_input = {
-            "input": {
-                "title": data['title'],
-                "bodyHtml": data['body_html'],
-                "published": True,
-                "tags": data['tags'],
+        variables = {
+            "product": {
+                "title": data["title"],
+                "descriptionHtml": data["body_html"],  # was: bodyHtml
                 "seo": {
-                    "description": data['seo']['description'],
-                    "title": data['seo']['title']
+                    "description": data["seo"]["description"],
+                    "title": data["seo"]["title"]
                 },
-                "variants": [{
-                    "barcode": data['variants'][0]['barcode'],
-                    "price": data['variants'][0]['price'],
-                    "weight": data['variants'][0]['grams'],
-                    "weightUnit": "GRAMS",
-                    "inventoryManagement": data['variants'][0]['inventory_management'],
-                    "taxable": data['variants'][0]['taxable']
-                }],
+                "tags": data["tags"] if isinstance(data["tags"], list)
+                else [t.strip() for t in data["tags"].split(",")],
+                "status": "DRAFT",  # create first; publish later
                 "metafields": [
-                    {
-                        "namespace": field['namespace'],
-                        "key": field['key'],
-                        "value": field['value'],
-                        "type": field['type']
-                    } for field in data['metafields']
+                    {"namespace": f["namespace"], "key": f["key"], "value": f["value"], "type": f["type"]}
+                    for f in data["metafields"]
                 ]
             }
         }
 
         payload = {
             "query": mutation,
-            "variables": product_input
+            "variables": variables
         }
         response = requests.post(url=shopify_store_url, headers=headers, json=payload)
 
@@ -81,11 +59,40 @@ class ProductCreator:
                 print('GraphQL errors:', response_data['errors'])
                 return None
             else:
+                # after productCreate
+                variant_node = response_data["data"]["productCreate"]["product"]["variants"]["nodes"][0]
+                variant_gid = variant_node["id"]
+
+                update_mutation = """
+                    mutation UpdateVariant($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+                      productVariantsBulkUpdate(productId: $productId, variants: $variants, allowPartialUpdates: true) {
+                        productVariants { id price inventoryItem { id } }
+                        userErrors { field message }
+                      }
+                    }
+                """
+                update_vars = {
+                    "productId": response_data["data"]["productCreate"]["product"]["id"],
+                    "variants": [{
+                        "id": variant_gid,
+                        "price": str(data["variants"][0]["price"]),
+                        # "weight": float(data["variants"][0]["grams"]),
+                        # "weightUnit": "GRAMS",
+                        "barcode": data["variants"][0]["barcode"],
+                        "taxable": bool(data["variants"][0]["taxable"]),
+                        "inventoryItem": {"tracked": data["variants"][0]["inventory_management"] == "SHOPIFY"}
+                    }]
+                }
+                upd = self.execute_graphql_query(update_mutation, update_vars)
+                errs = upd.get("errors")
+                if errs:
+                    print("BulkUpdate userErrors:", errs)
+
                 product = response_data['data']['productCreate']['product']
                 productID = re.sub(r'\D', '', product['id'])
-                variant = product['variants']['edges'][0]['node']
-                variantID = re.sub(r'\D', '', variant['id'])
-                inventory_item_id = re.sub(r'\D', '', variant['inventoryItem']['id'])
+                variant_node = response_data["data"]["productCreate"]["product"]["variants"]["nodes"][0]
+                variantID = re.sub(r'\D', '', variant_node['id'])
+                inventory_item_id = re.sub(r'\D', '', variant_node['inventoryItem']['id'])
                 self.publish_product_to_all_channels(response_data['data']['productCreate']['product']['id'])
                 if btw_tag == 'BTW Hoog':
                     collection_id = "gid://shopify/Collection/637676978514"
@@ -147,12 +154,12 @@ class ProductCreator:
             {'node': {'id': 'gid://shopify/Publication/197467734354', 'name': 'Google & YouTube'}},
             {'node': {'id': 'gid://shopify/Publication/197766807890', 'name': 'Facebook & Instagram'}},
         ]
-        
+
         for publication in PUBLICATIONS:
             publication_id = publication['node']['id']
             publication_name = publication['node']['name']
             # print(f"Publishing to {publication_name} (ID: {publication_id})")
-    
+
             mutation = """
                 mutation publishablePublish($id: ID!, $input: [PublicationInput!]!) {
                   publishablePublish(id: $id, input: $input) {
@@ -183,7 +190,7 @@ class ProductCreator:
         Executes a GraphQL query or mutation against the Shopify API.
         """
         access_token = os.environ["ACCESS_TOKEN"]
-        shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2023-10/graphql.json'
+        shopify_store_url = 'https://7c70bf.myshopify.com/admin/api/2025-07/graphql.json'
         headers = {
             "Content-Type": "application/json",
             "X-Shopify-Access-Token": access_token
