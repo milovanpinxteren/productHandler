@@ -39,7 +39,7 @@ class ProductCreator:
                 },
                 "tags": data["tags"] if isinstance(data["tags"], list)
                 else [t.strip() for t in data["tags"].split(",")],
-                "status": "DRAFT",  # create first; publish later
+                "status": "ACTIVE",  # create first; publish later
                 "metafields": [
                     {"namespace": f["namespace"], "key": f["key"], "value": f["value"], "type": f["type"]}
                     for f in data["metafields"]
@@ -93,6 +93,26 @@ class ProductCreator:
                 variant_node = response_data["data"]["productCreate"]["product"]["variants"]["nodes"][0]
                 variantID = re.sub(r'\D', '', variant_node['id'])
                 inventory_item_id = re.sub(r'\D', '', variant_node['inventoryItem']['id'])
+
+                inv_item_update = """
+                mutation InvItemUpdate($id: ID!, $input: InventoryItemInput!) {
+                  inventoryItemUpdate(id: $id, input: $input) {
+                    inventoryItem { id measurement { weight { unit value } } }
+                    userErrors { field message }
+                  }
+                }
+                """
+                inv_vars = {
+                    "id": variant_node["inventoryItem"]["id"],  # you already have this
+                    "input": {
+                        "tracked": data["variants"][0]["inventory_management"] == "SHOPIFY",
+                        "measurement": {"weight": {"unit": "GRAMS", "value": float(data["variants"][0]["grams"])}}
+                    }
+                }
+                res = self.execute_graphql_query(inv_item_update, inv_vars)
+                print("InventoryItemUpdate userErrors:",
+                      res.get("data", {}).get("inventoryItemUpdate", {}).get("userErrors", []))
+
                 self.publish_product_to_all_channels(response_data['data']['productCreate']['product']['id'])
                 if btw_tag == 'BTW Hoog':
                     collection_id = "gid://shopify/Collection/637676978514"
