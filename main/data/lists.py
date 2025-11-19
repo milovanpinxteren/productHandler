@@ -107,6 +107,13 @@ class Lists:
         'Maasdorst',
         "Baxbier",
         "Revolution",
+        "More Brewing",
+        "Maplewood",
+        "Riverlands",
+        "Mikerphone",
+        "Half Acre",
+        "Phase Three",
+        "Old Irving",
 
     ]
 
