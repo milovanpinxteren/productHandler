@@ -12,10 +12,8 @@ class ExistmentChecker:
             self.shopify_store_url = f'https://7c70bf.myshopify.com/search?q={query}'
             response = requests.get(url=self.shopify_store_url)
             soup = BeautifulSoup(response.text, 'html.parser')
-            try:
-                number_of_results = int(re.findall(r'\d+', soup.find(id='ProductCountDesktop').string)[0])
-            except AttributeError:
-                number_of_results = 0
+            product_cards = soup.find_all(class_='product-card-wrapper')
+            number_of_results = len(product_cards)
             if number_of_results == 0:
                 return False, 'Geen resultaten gevonden'
             # if number_of_results > 1:
